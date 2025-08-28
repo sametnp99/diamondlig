@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diamond Lig</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    html { scroll-behavior: smooth; }
+    .section { padding: 80px 20px; opacity: 0; transform: translateY(50px); }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <!-- Navbar -->
+  <header class="bg-blue-800 text-white sticky top-0 shadow z-50">
+    <div class="container mx-auto flex justify-between items-center p-4">
+      <h1 class="text-xl md:text-2xl font-bold">HEMEN MAÇ AL: 05345064576</h1>
+      <nav id="navMenu" class="hidden md:flex flex-col md:flex-row bg-blue-800 md:bg-transparent">
+        <a href="#uye-ol" class="block py-3 px-4 hover:text-yellow-300">Üye Ol</a>
+        <a href="#giris" class="block py-3 px-4 hover:text-yellow-300">Giriş</a>
+        <a href="#fikstur" class="block py-3 px-4 hover:text-yellow-300">Fikstür</a>
+        <a href="#puan" class="block py-3 px-4 hover:text-yellow-300">Puan Tablosu</a>
+        <a href="#mac" class="block py-3 px-4 hover:text-yellow-300">Maç Günü Al</a>
+        <a href="#gol-krali" class="block py-3 px-4 hover:text-yellow-300">Gol Kralı</a>
+      </nav>
+      <button id="menuBtn" class="md:hidden text-3xl">≡</button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="section relative text-white text-center h-screen flex flex-col justify-center items-center overflow-hidden">
+    <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover">
+      <source src="diamondvideo.mp4" type="video/mp4">
+    </video>
+    <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+    <div class="relative z-10 px-4 text-center">
+      <h2 class="text-2xl sm:text-3xl md:text-5xl font-extrabold mb-3 sm:mb-4">Diamond Lig’e Hoşgeldin</h2>
+      <p class="text-sm sm:text-base md:text-lg mb-4 sm:mb-6">Takımını kur, maçını planla, puan tablosunda zirveye çık!</p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+        <a href="#uye-ol" class="bg-yellow-400 px-5 py-3 rounded-lg font-semibold hover:bg-yellow-500">Üye Ol</a>
+        <a href="#giris" class="bg-green-500 px-5 py-3 rounded-lg font-semibold hover:bg-green-600">Giriş</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Üye Ol -->
+  <section id="uye-ol" class="section bg-white shadow rounded-lg container mx-auto">
+    <h3 class="text-3xl font-bold mb-6 text-blue-700">Takım Üye Ol</h3>
+    <input id="registerTeam" type="text" placeholder="Takım Adı" class="border p-3 rounded w-full mb-4">
+    <input id="registerPass" type="password" placeholder="Parola" class="border p-3 rounded w-full mb-4">
+    <button id="registerBtn" class="bg-blue-600 text-white px-6 py-3 rounded w-full hover:bg-blue-700">Üye Ol</button>
+  </section>
+
+  <!-- Giriş -->
+  <section id="giris" class="section bg-gray-50 shadow rounded-lg container mx-auto">
+    <h3 class="text-3xl font-bold mb-6 text-green-700">Giriş Yap</h3>
+    <input id="loginTeam" type="text" placeholder="Takım Adı" class="border p-3 rounded w-full mb-4">
+    <input id="loginPass" type="password" placeholder="Parola" class="border p-3 rounded w-full mb-4">
+    <button id="loginBtn" class="bg-green-600 text-white px-6 py-3 rounded w-full hover:bg-green-700">Giriş Yap</button>
+  </section>
+
+  <!-- Fikstür ve Diğerler -->
+  <section class="section container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <section id="fikstur" class="section bg-white shadow rounded-lg overflow-x-auto">
+      <h3 class="text-3xl font-bold mb-6 text-orange-700">Fikstür</h3>
+      <ul id="matchList" class="list-disc list-inside text-gray-600"></ul>
+    </section>
+    <div id="mac-sonuclari" class="bg-white shadow rounded-lg p-4 overflow-x-auto">
+      <h3 class="text-2xl font-bold mb-4 text-red-700">Maç Sonuçları</h3>
+      <ul id="resultsList" class="list-disc list-inside text-gray-600 mb-4"></ul>
+      <input id="resultTeamA" type="text" placeholder="Takım A" class="border p-2 rounded w-full mb-2">
+      <input id="resultScoreA" type="number" placeholder="Skor A" class="border p-2 rounded w-full mb-2">
+      <input id="resultTeamB" type="text" placeholder="Takım B" class="border p-2 rounded w-full mb-2">
+      <input id="resultScoreB" type="number" placeholder="Skor B" class="border p-2 rounded w-full mb-2">
+      <button id="addResult" class="bg-red-600 text-white px-6 py-2 rounded w-full hover:bg-red-700">Sonuç Ekle</button>
+    </div>
+    <div id="puan" class="bg-gray-900 bg-opacity-90 text-white shadow-xl rounded-lg p-4 overflow-x-auto">
+      <h3 class="text-2xl font-extrabold mb-4 text-center tracking-widest">Puan Durumu</h3>
+      <table id="puan-tablosu-table" class="w-full text-center border-separate border-spacing-y-2"></table>
+    </div>
+    <div id="gol-krali" class="bg-white shadow rounded-lg p-4 overflow-x-auto">
+      <h3 class="text-2xl font-bold mb-4 text-yellow-700">Gol Krallığı</h3>
+      <table id="gol-krali-table" class="w-full text-center border"></table>
+    </div>
+  </section>
+
+  <!-- Maç Günü Alma -->
+  <section id="mac" class="section bg-white shadow rounded-lg container mx-auto overflow-x-auto">
+    <h3 class="text-3xl font-bold mb-6 text-red-700">Maç Günü Al</h3>
+    <input id="matchDate" type="date" class="border p-3 rounded w-full mb-2">
+    <select id="matchTime" class="border p-3 rounded w-full mb-2">
+      <option value="19:00-20:00">19:00 - 20:00</option>
+      <option value="20:00-21:00">20:00 - 21:00</option>
+      <option value="21:00-22:00">21:00 - 22:00</option>
+      <option value="22:00-23:00">22:00 - 23:00</option>
+      <option value="23:00-00:00">23:00 - 00:00</option>
+    </select>
+    <input id="teamA" type="text" placeholder="Takım A" class="border p-2 rounded w-full mb-2">
+    <input id="teamB" type="text" placeholder="Takım B" class="border p-2 rounded w-full mb-2">
+    <button id="planMatchBtn" class="bg-red-600 text-white px-6 py-3 rounded w-full hover:bg-red-700">Planla</button>
+    <ul id="plannedMatches" class="list-disc list-inside mt-4"></ul>
+  </section>
+
+  <footer class="bg-blue-900 text-white text-center py-6 mt-10">
+    <p>© 2025 Diamond Lig – Tüm hakları saklıdır.</p>
+  </footer>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    // Hamburger menü
+    const menuBtn = document.getElementById("menuBtn");
+    const navMenu = document.getElementById("navMenu");
+    menuBtn.addEventListener("click", () => {
+      navMenu.classList.toggle("hidden");
+    });
+
+    // GSAP scroll animasyonu
+    gsap.utils.toArray(".section").forEach(section => {
+      gsap.to(section, {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        scrollTrigger: { trigger: section, start: "top 80%" }
+      });
+    });
+
+    // Firebase yapılandırma (kendi bilgilerinle değiştir)
+    const firebaseConfig = {
+      apiKey: "API_KEY",
+      authDomain: "PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://PROJECT_ID.firebaseio.com",
+      projectId: "PROJECT_ID",
+      storageBucket: "PROJECT_ID.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database(app);
+
+    // Üye ol
+    document.getElementById("registerBtn").addEventListener("click", () => {
+      const team = document.getElementById("registerTeam").value.trim();
+      const pass = document.getElementById("registerPass").value.trim();
+      if(team && pass){
+        const ref = database.ref('teams').push();
+        ref.set({ team, pass });
+        alert("Üye olundu!");
+        document.getElementById("registerTeam").value = "";
+        document.getElementById("registerPass").value = "";
+      }
+    });
+
+    // Giriş
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      const team = document.getElementById("loginTeam").value.trim();
+      const pass = document.getElementById("loginPass").value.trim();
+      if(team && pass){
+        database.ref('teams').orderByChild('team').equalTo(team).once('value', snapshot => {
+          let found = false;
+          snapshot.forEach(s => {
+            if(s.val().pass === pass) found = true;
+          });
+          if(found){
+            alert("Giriş başarılı!");
+            // İsteğe göre localStorage veya yönlendirme eklenebilir
+          } else alert("Hatalı giriş!");
+        });
+      }
+    });
+
+    // Maç planlama
+    document.getElementById("planMatchBtn").addEventListener("click", () => {
+      const date = document.getElementById("matchDate").value;
+      const time = document.getElementById("matchTime").value;
+      const teamA = document.getElementById("teamA").value.trim();
+      const teamB = document.getElementById("teamB").value.trim();
+      if(date && time && teamA && teamB){
+        const ref = database.ref('matches').push();
+        ref.set({ date, time, teamA, teamB });
+        loadMatches();
+        document.getElementById("matchDate").value = "";
+        document.getElementById("teamA").value = "";
+        document.getElementById("teamB").value = "";
+      } else alert("Lütfen tüm alanları doldurun!");
+    });
+
+    function loadMatches(){
+      const ul = document.getElementById("plannedMatches");
+      ul.innerHTML = "";
+      database.ref('matches').once('value', snapshot => {
+        snapshot.forEach(s => {
+          const m = s.val();
+          const li = document.createElement("li");
+          li.textContent = `${m.date} ⏰ ${m.time} ⚽ ${m.teamA} - ${m.teamB}`;
+          ul.appendChild(li);
+        });
+      });
+    }
+
+    // Sayfa yüklendiğinde maçları yükle
+    window.addEventListener("DOMContentLoaded", loadMatches);
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

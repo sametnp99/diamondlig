@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Takım Sayfası</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-900 min-h-screen">
+
+  <div class="container mx-auto py-6 space-y-6">
+
+    <!-- Hoşgeldin -->
+    <div class="bg-white shadow-xl rounded-2xl p-6 max-w-md mx-auto w-full text-center">
+      <h1 class="text-3xl font-bold mb-4">Hoşgeldin <span id="teamName" class="text-blue-600"></span>!</h1>
+      <p class="text-lg mb-4">Burası takımına özel sayfa.</p>
+      <div class="space-y-2">
+        <a href="index.html" class="block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Ana Sayfa</a>
+        <button onclick="logout()" class="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Çıkış Yap</button>
+      </div>
+    </div>
+
+    <!-- Maç Alma -->
+    <div class="bg-white shadow-xl rounded-2xl p-6 max-w-md mx-auto w-full">
+      <h2 class="text-2xl font-bold mb-4 text-red-600">📅 Maç Al</h2>
+      <input id="matchDate" type="date" class="border p-2 rounded w-full mb-2">
+      <select id="matchTime" class="border p-2 rounded w-full mb-2">
+        <option value="19:00-20:00">19:00 - 20:00</option>
+        <option value="20:00-21:00">20:00 - 21:00</option>
+        <option value="21:00-22:00">21:00 - 22:00</option>
+        <option value="22:00-23:00">22:00 - 23:00</option>
+      </select>
+      <input id="opponent" type="text" placeholder="Rakip Takım" class="border p-2 rounded w-full mb-2">
+      <button onclick="addMatch()" class="bg-blue-600 text-white px-4 py-2 rounded w-full hover:bg-blue-700">Planla</button>
+
+      <ul id="teamMatches" class="list-disc list-inside mt-4 text-gray-700"></ul>
+    </div>
+
+    <!-- Oyuncu Kayıt -->
+    <div class="bg-white shadow-xl rounded-2xl p-6 max-w-md mx-auto w-full">
+      <h2 class="text-2xl font-bold mb-4 text-blue-600">👥 Oyuncu Kayıt</h2>
+      <input id="playerNumber" type="number" placeholder="Forma Numarası" class="border p-2 rounded w-full mb-2">
+      <input id="playerName" type="text" placeholder="İsim" class="border p-2 rounded w-full mb-2">
+      <input id="playerSurname" type="text" placeholder="Soyisim" class="border p-2 rounded w-full mb-2">
+      <input id="playerAge" type="number" placeholder="Yaş" min="10" max="60" class="border p-2 rounded w-full mb-2">
+      <button onclick="addPlayer()" class="bg-green-600 text-white px-4 py-2 rounded w-full hover:bg-green-700">Oyuncu Ekle</button>
+
+      <div class="overflow-x-auto mt-4">
+        <table class="w-full border text-center" id="playersTable"></table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const team = localStorage.getItem("currentTeam");
+    if (!team) {
+      window.location.href = "index.html";
+    } else {
+      document.getElementById("teamName").textContent = team;
+    }
+
+    // Çıkış
+    function logout() {
+      localStorage.removeItem("currentTeam");
+      window.location.href = "index.html";
+    }
+
+    // Maç ekleme
+    function addMatch() {
+      const date = document.getElementById("matchDate").value;
+      const time = document.getElementById("matchTime").value;
+      const opponent = document.getElementById("opponent").value.trim();
+      if (date && time && opponent) {
+        const matches = JSON.parse(localStorage.getItem(`matches_${team}`)) || [];
+        matches.push({ date, time, opponent });
+        localStorage.setItem(`matches_${team}`, JSON.stringify(matches));
+        loadMatches();
+        document.getElementById("matchDate").value = "";
+        document.getElementById("opponent").value = "";
+      } else {
+        alert("Lütfen tüm alanları doldurun!");
+      }
+    }
+
+    function loadMatches() {
+      const matches = JSON.parse(localStorage.getItem(`matches_${team}`)) || [];
+      const ul = document.getElementById("teamMatches");
+      ul.innerHTML = "";
+      matches.forEach(m => {
+        const li = document.createElement("li");
+        li.textContent = `${m.date} ⏰ ${m.time} ⚽ Rakip: ${m.opponent}`;
+        ul.appendChild(li);
+      });
+    }
+
+    // Oyuncu ekleme
+    function addPlayer() {
+      const number = document.getElementById("playerNumber").value.trim();
+      const name = document.getElementById("playerName").value.trim();
+      const surname = document.getElementById("playerSurname").value.trim();
+      const age = document.getElementById("playerAge").value.trim();
+      if (number && name && surname && age) {
+        const players = JSON.parse(localStorage.getItem(`players_${team}`)) || [];
+        players.push({ number, name, surname, age, image: null });
+        localStorage.setItem(`players_${team}`, JSON.stringify(players));
+        loadPlayers();
+        document.getElementById("playerNumber").value = "";
+        document.getElementById("playerName").value = "";
+        document.getElementById("playerSurname").value = "";
+        document.getElementById("playerAge").value = "";
+      } else {
+        alert("Lütfen tüm alanları doldurun!");
+      }
+    }
+
+    // Oyuncu resmi yükleme
+    function uploadImage(index, input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const players = JSON.parse(localStorage.getItem(`players_${team}`)) || [];
+        players[index].image = e.target.result;
+        localStorage.setItem(`players_${team}`, JSON.stringify(players));
+        loadPlayers();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Oyuncu silme
+    function deletePlayer(index) {
+      let players = JSON.parse(localStorage.getItem(`players_${team}`)) || [];
+      players.splice(index, 1);
+      localStorage.setItem(`players_${team}`, JSON.stringify(players));
+      loadPlayers();
+    }
+
+    // Oyuncu düzenleme
+    function editPlayer(index) {
+      let players = JSON.parse(localStorage.getItem(`players_${team}`)) || [];
+      const p = players.splice(index, 1)[0];
+      localStorage.setItem(`players_${team}`, JSON.stringify(players));
+      document.getElementById("playerNumber").value = p.number;
+      document.getElementById("playerName").value = p.name;
+      document.getElementById("playerSurname").value = p.surname;
+      document.getElementById("playerAge").value = p.age;
+      loadPlayers();
+    }
+
+    function loadPlayers() {
+      const players = JSON.parse(localStorage.getItem(`players_${team}`)) || [];
+      const table = document.getElementById("playersTable");
+      table.innerHTML = "";
+      if (players.length > 0) {
+        const header = `<tr class='bg-gray-200'>
+          <th class='p-2'>Foto</th>
+          <th class='p-2'>Forma No</th>
+          <th class='p-2'>İsim</th>
+          <th class='p-2'>Soyisim</th>
+          <th class='p-2'>Yaş</th>
+          <th class='p-2'>Resim Yükle</th>
+          <th class='p-2'>İşlemler</th>
+        </tr>`;
+        table.innerHTML = header;
+        players.forEach((p, index) => {
+          const row = `<tr class='border'>
+            <td class='p-2'>${p.image ? `<img src='${p.image}' class='w-12 h-12 rounded-full mx-auto'>` : "❌"}</td>
+            <td class='p-2'>${p.number}</td>
+            <td class='p-2'>${p.name}</td>
+            <td class='p-2'>${p.surname}</td>
+            <td class='p-2'>${p.age}</td>
+            <td class='p-2'><input type='file' accept='image/*' onchange='uploadImage(${index}, this)'></td>
+            <td class='p-2 space-x-2'>
+              <button onclick='editPlayer(${index})' class='bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600'>✏️</button>
+              <button onclick='deletePlayer(${index})' class='bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600'>🗑️</button>
+            </td>
+          </tr>`;
+          table.innerHTML += row;
+        });
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      loadMatches();
+      loadPlayers();
+    });
+  </script>
+
+</body>
+</html>
